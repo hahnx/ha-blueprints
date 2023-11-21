@@ -1,0 +1,46 @@
+blueprint:
+  name: Light Color Setter
+  description: Changes the color temperatur of a light when it is switched on. The color temperature is set based on the time of the day.
+  domain: automation
+  input:
+    the_light:
+      name: Light
+      description: The light that should be onserved and which color temperature should be set when switched on.
+      selector:
+        entity:
+          filter:
+            - domain: light
+trigger:
+  - platform: state
+    entity_id: !input the_light
+    to: "on"
+action:
+  - variables:
+      morning_light: 153
+      midday_light: 327
+      evening_light: 500
+  - if:
+      - condition: sun
+        after: sunset
+    then:
+      - service: light.turn_on
+        data:
+          color_temp: "{{ evening_light }}"
+        target:
+          entity_id: "{{ trigger.entity_id }}"
+    else:
+      - if:
+          - condition: time
+            after: "12:00:00"
+        then:
+          - service: light.turn_on
+            data:
+              color_temp: "{{ midday_light }}"
+            target:
+              entity_id: "{{ trigger.entity_id }}"
+        else:
+          - service: light.turn_on
+            data:
+              color_temp: "{{ morning_light }}"
+            target:
+              entity_id: "{{ trigger.entity_id }}"
