@@ -1,2 +1,2 @@
-# ha-blueprints
-Home Assistant Blueprints
+# Home Assistant Blueprints
+Some of my Home Assistant Blueprints
